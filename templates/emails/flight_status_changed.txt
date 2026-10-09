@@ -1,0 +1,12 @@
+Flight status update for {{ flight.flight_number }}
+
+Route: {{ flight.origin.iata_code }} → {{ flight.destination.iata_code }}
+
+Old status: {{ old_status }}
+New status: {{ new_status }}
+
+Scheduled departure: {{ flight.scheduled_departure }}
+Scheduled arrival: {{ flight.scheduled_arrival }}
+
+Thank you.
+Fly Management

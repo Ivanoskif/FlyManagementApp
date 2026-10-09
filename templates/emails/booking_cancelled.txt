@@ -1,0 +1,11 @@
+Hello {{ booking.user.get_username }},
+
+Your booking {{ booking.booking_code }} has been cancelled.
+
+Flight: {{ booking.flight.flight_number }}
+Route: {{ booking.flight.origin.iata_code }} → {{ booking.flight.destination.iata_code }}
+
+If this was a mistake, you can create a new booking from the flights list.
+
+Thank you.
+Fly Management

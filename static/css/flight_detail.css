@@ -1,0 +1,172 @@
+/* Flight Details page-specific styles (uses base.css tokens) */
+
+.fd-card {
+  border-radius: 18px;
+}
+
+.fd-hero {
+  border-radius: 22px;
+}
+
+.fd-hero__media {
+  position: relative;
+  height: 320px;
+  background: rgba(0,0,0,.06);
+}
+
+.fd-hero__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fd-hero__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.55));
+}
+
+.fd-hero__badges {
+  display: flex;
+  gap: 8px;
+}
+
+.fd-badge {
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.fd-hero__title h1 {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .2px;
+  margin: 0;
+}
+
+.fd-hero__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+@media (min-width: 992px) {
+  .fd-hero__body {
+    grid-template-columns: 1.4fr .6fr;
+    align-items: center;
+  }
+}
+
+.fd-times {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .fd-times {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.fd-times__item {
+  background: rgba(0,0,0,.03);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.fd-label {
+  font-size: .82rem;
+  color: rgba(0,0,0,.55);
+}
+
+.fd-value {
+  font-weight: 700;
+}
+
+.fd-cta {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+@media (min-width: 992px) {
+  .fd-cta {
+    justify-content: flex-end;
+  }
+}
+
+.fd-kv {
+  display: grid;
+  gap: 10px;
+}
+
+.fd-kv__row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.fd-kv__k {
+  color: rgba(0,0,0,.6);
+  font-size: .9rem;
+}
+
+.fd-kv__v {
+  font-weight: 600;
+}
+
+.fd-availability {
+  display: grid;
+  gap: 10px;
+}
+
+.fd-availability__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.fd-availability__class {
+  font-weight: 800;
+}
+
+.fd-availability__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fd-dot {
+  opacity: .5;
+}
+
+.fd-table thead th {
+  color: rgba(0,0,0,.6);
+  font-weight: 700;
+}
+
+.fd-bottom-cta {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}

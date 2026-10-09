@@ -1,0 +1,20 @@
+Hello {{ booking.user.username }},
+
+Your refund request has been REJECTED.
+
+Booking: {{ booking.booking_code }}
+Flight: {{ booking.flight.flight_number }}
+Route: {{ booking.flight.origin.iata_code }} → {{ booking.flight.destination.iata_code }}
+
+{% if refund.reason %}
+Reason:
+{{ refund.reason }}
+{% else %}
+Reason: Not specified.
+{% endif %}
+
+Status: {{ refund.status }}
+
+If you have questions, please contact support.
+
+Fly Management

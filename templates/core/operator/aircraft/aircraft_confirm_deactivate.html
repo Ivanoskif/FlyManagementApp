@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Out of Service{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary" href="{% url 'core_op:aircraft_list' %}">← Back</a>
+</div>
+
+<div class="border rounded p-4">
+  <h1 class="h5 mb-2">Set aircraft OUT OF SERVICE</h1>
+  <p class="text-muted mb-3">
+    This will update the status to <strong>OUT_OF_SERVICE</strong> (no hard delete).
+  </p>
+
+  <div class="mb-3">
+    <div><strong>{{ object.registration_code }}</strong></div>
+    <div class="text-muted">{{ object.airline.name }} · {{ object.model.manufacturer }} {{ object.model.model_name }}</div>
+    <div class="text-muted">Current status: {{ object.get_status_display }}</div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Confirm</button>
+    <a class="btn btn-outline-secondary" href="{% url 'core_op:aircraft_list' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+/* Login page styles */
+
+.login-card{
+  border-radius: 20px;
+}
+
+.login-card .form-control{
+  border-radius: 12px;
+}
+
+.login-card .btn{
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.login-footer a{
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-footer a:hover{
+  text-decoration: underline;
+}

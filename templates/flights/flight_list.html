@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Flights - Fly Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/flights_list.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="fm-flights-hero">
+  <div class="container">
+    <div class="fm-flights-hero__wrap">
+      <div>
+        <h1 class="fm-flights-hero__title">Flights</h1>
+        <p class="fm-flights-hero__sub">Search by route, date, passengers and class.</p>
+      </div>
+      <div class="fm-flights-hero__pill">
+        <span class="fm-dot"></span>
+        <span>Live availability</span>
+      </div>
+    </div>
+
+      <div class="fm-filter-card">
+  <form method="get" class="row g-2 g-md-3 align-items-end">
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">Search</label>
+      {{ form.q }}
+    </div>
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">Origin</label>
+      {{ form.origin }}
+    </div>
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">Destination</label>
+      {{ form.destination }}
+    </div>
+
+    <div class="col-12 col-md-3 d-flex gap-2">
+      <button class="btn fm-btn-brand w-100" type="submit">
+        Search flights
+      </button>
+      <a class="btn btn-outline-secondary fm-btn-soft w-100"
+         href="{% url 'flights:flight_list' %}">
+        Reset
+      </a>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label class="form-label fm-label">Date</label>
+      {{ form.date }}
+    </div>
+
+    <div class="col-6 col-md-4">
+      <label class="form-label fm-label">Passengers</label>
+      {{ form.passengers }}
+    </div>
+
+    <div class="col-6 col-md-4">
+      <label class="form-label fm-label">Class</label>
+      {{ form.fare_class }}
+    </div>
+
+  </form>
+</div>
+
+
+  </div>
+</section>
+
+<section class="container fm-results">
+  <div class="mb-3">
+    <h2 class="fm-results__title mb-0">Available flights</h2>
+    <div class="text-muted fm-results__sub">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }} • {{ page_obj.paginator.count }} total
+    </div>
+  </div>
+
+  <div class="row g-3">
+    {% for item in flight_cards %}
+      {% with f=item.flight best=item.best %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <article class="fm-flight-card fm-flight-card--img">
+
+          <div class="fm-flight-card__imgwrap">
+            {% if item.image_url %}
+              <img src="{{ item.image_url }}" class="fm-flight-card__img" alt="{{ f.destination.city }}">
+            {% else %}
+              <img src="{% static 'card_img.jpg' %}" class="fm-flight-card__img" alt="Flight">
+            {% endif %}
+            <div class="fm-flight-card__overlay"></div>
+
+            <div class="fm-flight-card__img-top">
+              <div class="fm-flight-badge">
+                <div class="fm-flight-no">{{ f.flight_number }}</div>
+                <div class="fm-flight-airline">{{ f.airline.name }}</div>
+              </div>
+
+              <span class="fm-status fm-status--{{ f.status|lower }}">
+                {{ f.get_status_display }}
+              </span>
+            </div>
+
+            <div class="fm-flight-card__img-bottom">
+              <div class="fm-route">
+                <span class="fm-iata">{{ f.origin.iata_code }}</span>
+                <span class="fm-route__arrow">→</span>
+                <span class="fm-iata">{{ f.destination.iata_code }}</span>
+              </div>
+              <div class="fm-route-sub">
+                {{ f.origin.city }}, {{ f.origin.country }} •
+                {{ f.destination.city }}, {{ f.destination.country }}
+              </div>
+            </div>
+          </div>
+
+
+          <div class="fm-flight-card__body">
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="fm-kv">
+                  <div class="fm-k">Departure</div>
+                  <div class="fm-v">
+                    {{ f.scheduled_departure|date:"M d, Y" }} • {{ f.scheduled_departure|time:"H:i" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="fm-kv">
+                  <div class="fm-k">Arrival</div>
+                  <div class="fm-v">
+                    {{ f.scheduled_arrival|date:"M d, Y" }} • {{ f.scheduled_arrival|time:"H:i" }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="fm-divider"></div>
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div class="fm-price">
+                {% if best %}
+                  <div class="fm-price__label">Best fare</div>
+                  <div class="fm-price__value">
+                    From {{ best.price }} EUR
+                    <span class="fm-price__hint">
+                      • {{ best.fare_class.code }} • {{ best.available }} seats
+                    </span>
+                  </div>
+                {% else %}
+                  <div class="fm-price__label text-danger">No seats</div>
+                  <div class="fm-price__value">—</div>
+                  <div class="fm-price__hint">for selected filters</div>
+                {% endif %}
+              </div>
+
+              <a class="btn btn-outline-secondary fm-btn-soft"
+                 href="{% url 'flights:flight_detail' f.id %}">
+                Details
+              </a>
+            </div>
+
+
+          </div>
+
+        </article>
+      </div>
+      {% endwith %}
+    {% empty %}
+      <div class="col-12">
+        <div class="fm-empty">
+          <div class="fm-empty__title">No flights found.</div>
+          <div class="fm-empty__sub">Try changing filters.</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <nav class="fm-pager mt-4">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ page_obj.previous_page_number }}&origin={{ request.GET.origin }}&destination={{ request.GET.destination }}&date={{ request.GET.date }}&passengers={{ request.GET.passengers }}&fare_class={{ request.GET.fare_class }}">
+            Prev
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Prev</span></li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ page_obj.next_page_number }}&origin={{ request.GET.origin }}&destination={{ request.GET.destination }}&date={{ request.GET.date }}&passengers={{ request.GET.passengers }}&fare_class={{ request.GET.fare_class }}">
+            Next
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</section>
+
+{% endblock %}

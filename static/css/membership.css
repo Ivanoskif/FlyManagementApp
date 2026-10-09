@@ -1,0 +1,58 @@
+/* Membership page styles */
+
+.ms-card{
+  border-radius: 18px;
+}
+
+.ms-current{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.ms-plan{
+  border-radius: 18px;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.ms-plan:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 .9rem 1.8rem rgba(0,0,0,.10);
+}
+
+.ms-plan__top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ms-plan__name{
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+
+.ms-ul{
+  padding-left: 18px;
+  margin: 0 0 14px 0;
+}
+
+.ms-chip{
+  font-size: .75rem;
+  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.06);
+  background: rgba(0,0,0,.02);
+}
+
+.ms-chip--basic{ background: rgba(0,0,0,.03); }
+.ms-chip--plus{ background: rgba(14,165,233,.14); }     /* sky-ish */
+.ms-chip--premium{ background: rgba(168,85,247,.14); }  /* purple-ish */
+
+.ms-note{
+  padding-top: 8px;
+  border-top: 1px solid rgba(0,0,0,.06);
+}

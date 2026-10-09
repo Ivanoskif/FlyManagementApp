@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Routes (Operator){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">Routes</h1>
+    <div class="text-muted">Manage airline routes</div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'core_op:route_create' %}">+ New route</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-10">
+    <input class="form-control" name="q" value="{{ request.GET.q }}"
+           placeholder="Search airline / origin / destination (IATA or city)">
+  </div>
+  <div class="col-sm-2 d-grid">
+    <button class="btn btn-outline-secondary">Search</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Airline</th>
+        <th>Origin</th>
+        <th>Destination</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in routes %}
+        <tr>
+          <td><strong>{{ r.airline.name }}</strong></td>
+          <td>{{ r.origin.iata_code }} — {{ r.origin.city }}</td>
+          <td>{{ r.destination.iata_code }} — {{ r.destination.city }}</td>
+          <td>
+            {% if r.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'core_op:route_edit' r.id %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'core_op:route_deactivate' r.id %}">Deactivate</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-muted">No routes found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<div>
+    {% if is_paginated %}
+<nav class="mt-3">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}">Prev</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Prev</span></li>
+    {% endif %}
+
+    <li class="page-item disabled">
+      <span class="page-link">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}">Next</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
+</div>
+</div>
+{% endblock %}

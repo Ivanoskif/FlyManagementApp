@@ -1,0 +1,9 @@
+Hello {{ booking.user.username }},
+
+Your refund has been COMPLETED ✅
+
+Booking: {{ booking.booking_code }}
+Refunded amount: {{ refund.amount }} {{ booking.currency }}
+Refunded at: {{ refund.refunded_at }}
+
+Fly Management

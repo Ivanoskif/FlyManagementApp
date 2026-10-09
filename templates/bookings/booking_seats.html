@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Choose seats{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking_seats.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'bookings:booking_detail' booking.id %}">
+  ← Back to booking
+</a>
+
+<div class="card border-0 shadow-sm bs-card mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h1 class="h5 mb-1">Choose seats</h1>
+        <div class="text-muted">
+          Booking: <strong>{{ booking.booking_code }}</strong> ·
+          Flight: <strong>{{ booking.flight.flight_number }}</strong>
+        </div>
+        <div class="text-muted">
+          {{ booking.flight.origin.iata_code }} → {{ booking.flight.destination.iata_code }}
+          · {{ booking.flight.scheduled_departure|date:"M d, Y H:i" }} → {{ booking.flight.scheduled_arrival|date:"M d, Y H:i" }}
+        </div>
+      </div>
+
+      <div class="text-end">
+        <span class="badge bg-dark">{{ booking.status }}</span>
+        <div class="small text-muted mt-2">
+          Membership:
+          <strong>{{ profile.membership_level }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <div class="row g-2 small">
+      <div class="col-md-4">
+        <div class="text-muted">Airline</div>
+        <div><strong>{{ booking.flight.airline.name }}</strong></div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="text-muted">Aircraft</div>
+        <div>
+          <strong>{{ booking.flight.aircraft.registration_code }}</strong>
+          · {{ booking.flight.aircraft.model }}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="text-muted">Capacity</div>
+        <div><strong>{{ booking.flight.aircraft.model.default_total_seats }}</strong> seats</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm bs-card mb-3">
+  <div class="card-body">
+    <div class="row g-3 align-items-end">
+      <div class="col-lg-6">
+        <label class="form-label mb-1">Select passenger</label>
+        <select id="passengerSelect" class="form-select" data-default="{{ default_passenger_id }}">
+          {% for p in passengers %}
+            <option value="{{ p.id }}" {% if p.id == default_passenger_id %}selected{% endif %}>
+              {{ p.first_name }} {{ p.last_name }}{% if p.seat_no %} (Seat: {{ p.seat_no }}){% endif %}
+            </option>
+          {% endfor %}
+        </select>
+
+        <div class="form-text">
+          {% if profile.can_choose_extra_legroom %}
+            PREMIUM: you may choose extra legroom seats (XL).
+          {% else %}
+            PLUS: extra legroom seats (XL) are disabled.
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="d-flex gap-2 justify-content-lg-end flex-wrap">
+          <span class="badge text-bg-success">Free</span>
+          <span class="badge text-bg-warning">Reserved</span>
+          <span class="badge text-bg-danger">Paid</span>
+          <span class="badge text-bg-secondary">XL (Premium)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm bs-card">
+  <div class="card-body">
+    <div class="text-muted small mb-2">
+      Tip: first pick a passenger, then click a green seat.
+    </div>
+
+    <div class="bs-seatmap">
+      {% for row, seats in rows.items %}
+        <div class="bs-row">
+          <div class="bs-row__label">Row {{ row }}</div>
+
+          {% for s in seats %}
+            {% with occ=occupied|get_item:s.id %}
+              {% if s.seat_letter == "C" or s.seat_letter == "E" %}
+                <span class="bs-aisle" aria-hidden="true"></span>
+              {% endif %}
+
+              {% if occ == "PAID" %}
+                <button class="btn btn-sm btn-danger bs-seat" type="button" disabled title="Paid">
+                  {{ s.seat_code }}
+                </button>
+
+              {% elif occ == "RESERVED" %}
+                <button class="btn btn-sm btn-warning bs-seat" type="button" disabled title="Reserved">
+                  {{ s.seat_code }}
+                </button>
+
+              {% else %}
+                {% if s.is_extra_legroom and not profile.can_choose_extra_legroom %}
+                  <button class="btn btn-sm btn-secondary bs-seat" type="button" disabled
+                          title="Extra legroom (Premium only)">
+                    {{ s.seat_code }} XL
+                  </button>
+                {% else %}
+                  <form method="post" class="d-inline bs-seatform">
+                    {% csrf_token %}
+                    <input type="hidden" name="passenger_id" class="passenger-id" value="{{ default_passenger_id }}">
+                    <input type="hidden" name="seat_id" value="{{ s.id }}">
+                    <button class="btn btn-sm btn-success bs-seat" type="submit"
+                            title="Assign {{ s.seat_code }} to selected passenger">
+                      {{ s.seat_code }}{% if s.is_extra_legroom %} XL{% endif %}
+                    </button>
+                  </form>
+                {% endif %}
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/booking_seats.js' %}"></script>
+{% endblock %}
+{% endblock %}

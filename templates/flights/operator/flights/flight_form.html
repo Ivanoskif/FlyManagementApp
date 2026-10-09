@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Flight (Operator){% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column m-3">
+  <div>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'flights_op:flight_list' %}">← Back</a>
+  </div>
+{% if object %}
+<div class="mt-2">
+  <a class="btn btn-sm btn-outline-info" href="{% url 'flights:flight_detail' object.id %}">
+    Change flight status
+  </a>
+</div>
+{% endif %}
+<div class="mt-2">
+    {% if object %}
+  <a class="btn btn-sm btn-outline-primary" href="{% url 'flights_op:flight_manage_crew' object.id %}">
+    Manage crew
+  </a>
+{% endif %}
+</div>
+
+</div>
+
+<div class="border rounded p-4 mb-4">
+  <h1 class="h5 mb-3">{% if object %}Edit flight{% else %}Create flight{% endif %}</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+  {% if form.errors %}
+  <div class="alert alert-danger">
+    {{ form.errors }}
+  </div>
+{% endif %}
+
+{% if fare_formset.non_form_errors %}
+  <div class="alert alert-danger">
+    {{ fare_formset.non_form_errors }}
+  </div>
+{% endif %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Flight number</label>
+        {{ form.flight_number }}
+        <div class="text-danger small">{{ form.flight_number.errors }}</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Airline</label>
+        {{ form.airline }}
+        <div class="text-danger small">{{ form.airline.errors }}</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Origin</label>
+        {{ form.origin }}
+        <div class="text-danger small">{{ form.origin.errors }}</div>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Destination</label>
+        {{ form.destination }}
+        <div class="text-danger small">{{ form.destination.errors }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Scheduled departure</label>
+        {{ form.scheduled_departure }}
+        <div class="text-danger small">{{ form.scheduled_departure.errors }}</div>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Scheduled arrival</label>
+        {{ form.scheduled_arrival }}
+        <div class="text-danger small">{{ form.scheduled_arrival.errors }}</div>
+      </div>
+
+
+      <div class="col-md-2">
+        <label class="form-label">Base price</label>
+        {{ form.base_price }}
+        <div class="text-danger small">{{ form.base_price.errors }}</div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label">Aircraft (optional)</label>
+        {{ form.aircraft }}
+        <div class="text-danger small">{{ form.aircraft.errors }}</div>
+      </div>
+
+      <div class="col-12">
+        <label class="form-label">Notes</label>
+        {{ form.notes }}
+        <div class="text-danger small">{{ form.notes.errors }}</div>
+      </div>
+    </div>
+
+    <hr class="my-4">
+
+
+    <h2 class="h6 mb-2">Fares (FlightFare)</h2>
+
+
+    {{ fare_formset.management_form }}
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Fare class</th>
+            <th>Price</th>
+            <th>Seats allocated</th>
+            <th>Seats sold</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ff in fare_formset.forms %}
+  <tr>
+    {% for h in ff.hidden_fields %}
+      {{ h }}
+    {% endfor %}
+
+    <td>
+      {{ ff.fare_class }}
+      <div class="text-danger small">{{ ff.fare_class.errors }}</div>
+    </td>
+    <td>
+      {{ ff.price }}
+      <div class="text-danger small">{{ ff.price.errors }}</div>
+    </td>
+    <td>
+      {{ ff.seats_allocated }}
+      <div class="text-danger small">{{ ff.seats_allocated.errors }}</div>
+    </td>
+    <td>
+      {{ ff.seats_sold }}
+      <div class="text-danger small">{{ ff.seats_sold.errors }}</div>
+    </td>
+    <td class="text-center">
+      {{ ff.DELETE }}
+    </td>
+  </tr>
+{% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-outline-secondary" href="{% url 'flights_op:flight_list' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

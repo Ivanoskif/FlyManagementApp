@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Routes - Fly Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/routes_list.css' %}?v=1">
+{% endblock %}
+
+{% block content %}
+
+<section class="fm-routes-hero">
+  <div class="container">
+    <div class="fm-routes-hero__wrap">
+      <div>
+        <h1 class="fm-routes-hero__title">Routes</h1>
+        <p class="fm-routes-hero__sub">Search by city, country or IATA — or pick exact airports.</p>
+      </div>
+      <div class="fm-routes-hero__pill">
+        <span class="fm-dot"></span>
+        <span>{{ page_obj.paginator.count }} routes</span>
+      </div>
+    </div>
+
+<div class="fm-filter-card">
+  <form method="get" class="row g-2 g-md-3 align-items-end">
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">Airline</label>
+      {{ form.airline_q }}
+    </div>
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">From</label>
+      {{ form.from_q }}
+    </div>
+
+    <div class="col-12 col-md-3">
+      <label class="form-label fm-label">To</label>
+      {{ form.to_q }}
+    </div>
+
+    <div class="col-12 col-md-3 d-flex gap-2">
+      <button class="btn fm-btn-brand w-100" type="submit">Filter</button>
+      <a class="btn btn-outline-secondary fm-btn-soft w-100"
+         href="{% url 'core:route_list' %}">
+        Reset
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label class="form-label fm-label">Origin</label>
+      {{ form.origin }}
+    </div>
+
+    <div class="col-12 col-md-6">
+      <label class="form-label fm-label">Destination</label>
+      {{ form.destination }}
+    </div>
+
+  </form>
+</div>
+  </div>
+</section>
+
+<section class="container fm-results">
+  <div class="row g-3">
+    {% for r in page_obj %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <article class="fm-route-card">
+          <div class="fm-route-card__top">
+            <div class="fm-airline">{{ r.airline.name }}</div>
+            <a class="btn btn-sm btn-outline-secondary fm-btn-soft"
+               href="{% url 'core:route_detail' r.pk %}">Details</a>
+          </div>
+
+          <div class="fm-route-line">
+            <span class="fm-iata">{{ r.origin.iata_code }}</span>
+            <span class="fm-arrow">→</span>
+            <span class="fm-iata">{{ r.destination.iata_code }}</span>
+          </div>
+
+          <div class="fm-route-sub">
+            {{ r.origin.city }}, {{ r.origin.country }}
+            <span class="fm-dot-sep">•</span>
+            {{ r.destination.city }}, {{ r.destination.country }}
+          </div>
+        </article>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="fm-empty">
+          <div class="fm-empty__title">No routes found.</div>
+          <div class="fm-empty__sub">Try changing filters.</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <nav class="fm-pager mt-4">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ page_obj.previous_page_number }}&from_q={{ request.GET.from_q }}&to_q={{ request.GET.to_q }}&origin={{ request.GET.origin }}&destination={{ request.GET.destination }}">
+            Prev
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Prev</span></li>
+      {% endif %}
+
+      <li class="page-item disabled">
+        <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      </li>
+
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ page_obj.next_page_number }}&from_q={{ request.GET.from_q }}&to_q={{ request.GET.to_q }}&origin={{ request.GET.origin }}&destination={{ request.GET.destination }}">
+            Next
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">Next</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</section>
+
+{% endblock %}

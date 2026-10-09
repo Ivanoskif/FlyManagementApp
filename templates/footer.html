@@ -1,0 +1,64 @@
+{% load static %}
+{% load auth_extras %}
+
+<footer class="fm-footer mt-auto">
+  <div class="container py-4">
+
+    <div class="fm-footer-card p-4">
+      <div class="row g-4 align-items-start">
+
+
+        <div class="col-12 col-lg-4">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <img src="{% static 'logo.jpg' %}" alt="Fly Management logo" class="fm-footer-logo">
+            <div class="fm-footer-brand">Fly Management</div>
+          </div>
+          <div class="fm-footer-sub">
+            Flight booking & operations management
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-4">
+          <div class="fm-footer-title">Explore</div>
+          <div class="fm-footer-links">
+            <a href="{% url 'core:home' %}">Home</a>
+            <a href="{% url 'flights:flight_list' %}">Flights</a>
+            <a href="{% url 'core:route_list' %}">Routes</a>
+
+            {% if user.is_authenticated and user|has_group:"Passenger" %}
+              <a href="{% url 'bookings:my_bookings' %}">My bookings</a>
+              <a href="{% url 'accounts:profile' %}">Profile</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-4 text-lg-end">
+          {% if user.is_authenticated %}
+          {% if user.is_superuser or user.is_staff or user|has_group:"Operator" %}
+            <div class="fm-footer-title">Operator</div>
+            <div class="fm-footer-links">
+              <a href="{% url 'reports:operator_dashboard' %}">Reports</a>
+              <a href="{% url 'bookings:refund_queue' %}">Refunds</a>
+              <a href="{% url 'core_op:airport_list' %}">Airports</a>
+              <a href="{% url 'core_op:airline_list' %}">Airlines</a>
+              <a href="{% url 'core_op:aircraft_model_list' %}">Aircraft Models</a>
+              <a href="{% url 'core_op:aircraft_list' %}">Aircraft</a>
+              <a href="{% url 'core_op:crew_list' %}">Crew</a>
+              <a href="{% url 'core_op:route_list' %}">Routes (Ops)</a>
+              <a href="{% url 'flights_op:flight_list' %}">Flights (Ops)</a>
+            </div>
+          {% endif %}
+          {% endif %}
+        </div>
+
+      </div>
+
+      <hr class="fm-footer-hr">
+
+      <div class="d-flex justify-content-center flex-wrap gap-2 fm-footer-bottom">
+        <span>© {% now "Y" %} Fly Management</span>
+      </div>
+    </div>
+
+  </div>
+</footer>

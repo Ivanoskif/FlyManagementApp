@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Upgrade Membership{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+      <div class="card-body p-4">
+
+        <h1 class="h5 mb-2">Online payment</h1>
+
+        <div class="text-muted mb-3">
+          Upgrade to <strong>{{ target }}</strong>
+          · Current: <strong>{{ profile.membership_level }}</strong>
+          {% if target == "PLUS" %}
+            · Total: <strong>19.99 EUR</strong>
+          {% elif target == "PREMIUM" %}
+            · Total: <strong>39.99 EUR</strong>
+          {% endif %}
+        </div>
+
+        <form method="post" class="row g-3">
+          {% csrf_token %}
+          <input type="hidden" name="level" value="{{ target }}">
+
+          <div class="col-12">
+            <label class="form-label">Name on card</label>
+            {{ form.name_on_card }}
+            {{ form.name_on_card.errors }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Card number</label>
+            {{ form.card_number }}
+            {{ form.card_number.errors }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Expiry</label>
+            {{ form.expiry }}
+            {{ form.expiry.errors }}
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">CVV</label>
+            {{ form.cvv }}
+            {{ form.cvv.errors }}
+          </div>
+
+          <div class="col-12 d-flex gap-2 flex-wrap">
+            <button class="btn btn-primary" type="submit">Pay now</button>
+            <a class="btn btn-outline-secondary" href="{% url 'accounts:membership' %}">Back</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

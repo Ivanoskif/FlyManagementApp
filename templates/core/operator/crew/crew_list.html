@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Crew (Operator){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">Crew Members</h1>
+    <div class="text-muted">Manage crew members</div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'core_op:crew_create' %}">+ New crew member</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-10">
+    <input class="form-control" name="q" value="{{ request.GET.q }}"
+           placeholder="Search name/email/phone/role/license/airline">
+  </div>
+  <div class="col-sm-2 d-grid">
+    <button class="btn btn-outline-secondary">Search</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Airline</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>License</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in crew %}
+        <tr>
+          <td><strong>{{ c.first_name }} {{ c.last_name }}</strong></td>
+          <td>{{ c.get_role_display }}</td>
+          <td>{{ c.airline.name|default:"-" }}</td>
+          <td>{{ c.email|default:"-" }}</td>
+          <td>{{ c.phone|default:"-" }}</td>
+          <td>{{ c.license_no|default:"-" }}</td>
+          <td>
+            {% if c.status == "ACTIVE" %}
+              <span class="badge bg-success">{{ c.get_status_display }}</span>
+            {% else %}
+              <span class="badge bg-secondary">{{ c.get_status_display }}</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'core_op:crew_edit' c.id %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'core_op:crew_deactivate' c.id %}">Deactivate</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="8" class="text-muted">No crew members found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

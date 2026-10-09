@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Flight Details - Fly Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/flight_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'flights:flight_list' %}">← Back</a>
+
+<section class="fd-hero card border-0 shadow-sm overflow-hidden mb-4">
+  <div class="fd-hero__media">
+    <img src="{{ hero_image_url }}" alt="{{ flight.destination.city }}" class="fd-hero__img">
+    <div class="fd-hero__overlay">
+      <div class="fd-hero__badges">
+        <span class="badge fd-badge">{{ flight.status }}</span>
+      </div>
+      <div class="fd-hero__title">
+        <h1 class="mb-1">
+          {{ flight.origin.iata_code }} → {{ flight.destination.iata_code }}
+        </h1>
+        <div class="text-white-50">
+          {{ flight.flight_number }} · {{ flight.airline.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fd-hero__body">
+    <div class="fd-times">
+      <div class="fd-times__item">
+        <div class="fd-label">Scheduled departure</div>
+        <div class="fd-value">{{ flight.scheduled_departure }}</div>
+      </div>
+      <div class="fd-times__item">
+        <div class="fd-label">Scheduled arrival</div>
+        <div class="fd-value">{{ flight.scheduled_arrival }}</div>
+      </div>
+
+      {% if flight.actual_departure %}
+      <div class="fd-times__item">
+        <div class="fd-label">Actual departure</div>
+        <div class="fd-value">{{ flight.actual_departure }}</div>
+      </div>
+      {% endif %}
+
+      {% if flight.actual_arrival %}
+      <div class="fd-times__item">
+        <div class="fd-label">Actual arrival</div>
+        <div class="fd-value">{{ flight.actual_arrival }}</div>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="fd-cta">
+      {% if can_book %}
+        <a class="btn btn-primary btn-lg" href="{% url 'bookings:booking_create' flight.id %}">Book now</a>
+        <a class="btn btn-outline-light btn-lg" href="#fares">Select fare</a>
+      {% else %}
+        <button class="btn btn-secondary btn-lg" disabled>Booking unavailable</button>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+    {% if is_operator %}
+<section class="card border-0 shadow-sm fd-card mt-4 mb-4">
+  <div class="card-body">
+    <h2 class="h6 mb-3">Operator actions</h2>
+    <div class="d-flex gap-2 flex-wrap">
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'flights:flight_set_status' flight.id %}">Change status</a>
+      <a class="btn btn-sm btn-outline-warning" href="{% url 'flights:flight_delay' flight.id %}">Delay (+minutes)</a>
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'flights:flight_reschedule' flight.id %}">Reschedule</a>
+      <a class="btn btn-sm btn-outline-danger" href="{% url 'flights:flight_cancel' flight.id %}">Cancel flight</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-lg-7">
+    <div class="card border-0 shadow-sm fd-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Flight info</h2>
+
+        <div class="fd-kv">
+          <div class="fd-kv__row">
+            <div class="fd-kv__k">Airline</div>
+            <div class="fd-kv__v">{{ flight.airline.name }}</div>
+          </div>
+          <div class="fd-kv__row">
+            <div class="fd-kv__k">Route</div>
+            <div class="fd-kv__v">
+              {{ flight.origin.city }}, {{ flight.origin.country }} ({{ flight.origin.iata_code }})
+              →
+              {{ flight.destination.city }}, {{ flight.destination.country }} ({{ flight.destination.iata_code }})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card border-0 shadow-sm fd-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Availability</h2>
+
+        <div class="fd-availability">
+          {% for x in fares %}
+            <div class="fd-availability__row">
+              <div class="fd-availability__class">{{ x.fare.fare_class.code }}</div>
+              <div class="fd-availability__meta">
+                <span class="text-muted">{{ x.fare.price }} EUR</span>
+                <span class="fd-dot">•</span>
+                <strong>{{ x.available }}</strong> seats
+              </div>
+            </div>
+          {% empty %}
+            <div class="text-muted">No fares configured for this flight.</div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="fares" class="card border-0 shadow-sm fd-card">
+  <div class="card-body">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+      <h2 class="h6 mb-0">Fares</h2>
+      {% if can_book %}
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'bookings:booking_create' flight.id %}">
+          Continue to booking
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm align-middle fd-table">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Price</th>
+            <th>Allocated</th>
+            <th>Sold</th>
+            <th>Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for x in fares %}
+            <tr>
+              <td><span class="fw-semibold">{{ x.fare.fare_class.code }}</span></td>
+              <td>{{ x.fare.price }} EUR</td>
+              <td>{{ x.fare.seats_allocated }}</td>
+              <td>{{ x.fare.seats_sold }}</td>
+              <td><span class="fw-bold">{{ x.available }}</span></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="text-muted">No fares found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

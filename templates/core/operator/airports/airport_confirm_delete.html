@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Deactivate Airport{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary" href="{% url 'core_op:airport_list' %}">← Back</a>
+</div>
+
+<div class="border rounded p-4">
+  <h1 class="h5 mb-2">Deactivate airport</h1>
+  <p class="text-muted mb-3">
+    This will set <strong>is_active = False</strong> (no hard delete).
+  </p>
+
+  <div class="mb-3">
+    <div><strong>{{ object.iata_code }}</strong> — {{ object.city }}, {{ object.country }}</div>
+    <div class="text-muted">{{ object.name }}</div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Deactivate</button>
+    <a class="btn btn-outline-secondary" href="{% url 'core_op:airport_list' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

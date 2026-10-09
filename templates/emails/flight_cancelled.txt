@@ -1,0 +1,8 @@
+Your flight {{ flight.flight_number }} has been cancelled.
+
+Route: {{ flight.origin.iata_code }} → {{ flight.destination.iata_code }}
+Scheduled departure: {{ flight.scheduled_departure }}
+Scheduled arrival: {{ flight.scheduled_arrival }}
+
+You will be notified if the flight is rescheduled.
+Fly Management

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Membership{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/membership.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'accounts:profile' %}">
+  ← Back to profile
+</a>
+
+<div class="card border-0 shadow-sm ms-card">
+  <div class="card-body">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="h5 mb-1">Membership</h1>
+        <div class="text-muted">
+          Choose a plan that matches your travel style.
+        </div>
+      </div>
+
+      <div class="ms-current">
+        <span class="text-muted small">Current level</span>
+        {% if profile.membership_level == "PREMIUM" %}
+          <span class="badge bg-dark">PREMIUM</span>
+        {% elif profile.membership_level == "PLUS" %}
+          <span class="badge bg-secondary">PLUS</span>
+        {% else %}
+          <span class="badge bg-warning text-dark">BASIC</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row g-3">
+
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm ms-plan h-100">
+          <div class="card-body d-flex flex-column">
+            <div class="ms-plan__top">
+              <div class="ms-plan__name">BASIC</div>
+              <div class="ms-chip ms-chip--basic">Starter</div>
+            </div>
+
+            <ul class="small text-muted ms-ul">
+              <li>No seat choice</li>
+              <li>Standard baggage rules</li>
+              <li>Auto seat assignment</li>
+            </ul>
+
+            <div class="mt-auto">
+              {% if profile.membership_level == "BASIC" %}
+                <button class="btn btn-outline-secondary w-100" disabled>
+                  Current plan
+                </button>
+              {% else %}
+                <button class="btn btn-outline-secondary w-100" disabled>
+                  Available by default
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm ms-plan ms-plan--plus h-100">
+          <div class="card-body d-flex flex-column">
+            <div class="ms-plan__top">
+              <div>
+                <div class="ms-plan__name">PLUS</div>
+                <div class="ms-price">€19.99 <span>per year</span></div>
+              </div>
+              <div class="ms-chip ms-chip--plus">Popular</div>
+            </div>
+
+            <ul class="small text-muted ms-ul">
+              <li>Seat choice (standard seats)</li>
+              <li>Better auto-seat priority</li>
+              <li>More flexibility</li>
+            </ul>
+
+            <div class="mt-auto">
+              {% if profile.membership_level == "BASIC" %}
+                <a class="btn btn-primary w-100"
+                   href="{% url 'accounts:membership_upgrade' %}?level=PLUS">
+                  Upgrade to PLUS
+                </a>
+              {% elif profile.membership_level == "PLUS" %}
+                <button class="btn btn-outline-secondary w-100" disabled>
+                  Current plan
+                </button>
+              {% else %}
+                <button class="btn btn-outline-secondary w-100" disabled>
+                  Included in PREMIUM
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm ms-plan ms-plan--premium h-100">
+          <div class="card-body d-flex flex-column">
+            <div class="ms-plan__top">
+              <div>
+                <div class="ms-plan__name">PREMIUM</div>
+                <div class="ms-price">€39.99 <span>per year</span></div>
+              </div>
+              <div class="ms-chip ms-chip--premium">Best</div>
+            </div>
+
+
+            <ul class="small text-muted ms-ul">
+              <li>Any seat choice (incl. extra legroom)</li>
+              <li>Priority experience</li>
+              <li>Free cancellation</li>
+            </ul>
+
+            <div class="mt-auto">
+              {% if profile.membership_level != "PREMIUM" %}
+                <a class="btn btn-dark w-100"
+                   href="{% url 'accounts:membership_upgrade' %}?level=PREMIUM">
+                  Upgrade to PREMIUM
+                </a>
+              {% else %}
+                <button class="btn btn-outline-secondary w-100" disabled>
+                  Current plan
+                </button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ms-note text-muted small mt-3">
+      Tip: PLUS/PREMIUM unlock seat selection features during booking.
+    </div>
+  </div>
+</div>
+{% endblock %}

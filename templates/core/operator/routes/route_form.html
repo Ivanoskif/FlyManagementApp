@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Route (Operator){% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary" href="{% url 'core_op:route_list' %}">← Back</a>
+</div>
+
+<div class="border rounded p-4">
+  <h1 class="h5 mb-3">{% if object %}Edit route{% else %}Create route{% endif %}</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Airline</label>
+        {{ form.airline }}
+        <div class="text-danger small">{{ form.airline.errors }}</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Origin</label>
+        {{ form.origin }}
+        <div class="text-danger small">{{ form.origin.errors }}</div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Destination</label>
+        {{ form.destination }}
+        <div class="text-danger small">{{ form.destination.errors }}</div>
+      </div>
+
+      <div class="col-md-2 d-flex align-items-end">
+        <div class="form-check">
+          {{ form.is_active }}
+          <label class="form-check-label">Active</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-outline-secondary" href="{% url 'core_op:route_list' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

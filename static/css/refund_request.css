@@ -1,0 +1,15 @@
+/* Refund request page styles */
+
+.rr-card{
+  border-radius: 18px;
+}
+
+.rr-card .form-control,
+.rr-card textarea,
+.rr-card select{
+  border-radius: 12px;
+}
+
+.rr-alert{
+  border-radius: 14px;
+}

@@ -1,0 +1,12 @@
+Hello {{ booking.user.username }},
+
+We received your refund request.
+
+Booking: {{ booking.booking_code }}
+Flight: {{ booking.flight.flight_number }} ({{ booking.flight.origin.iata_code }} -> {{ booking.flight.destination.iata_code }})
+Amount: {{ refund.amount }} {{ booking.currency }}
+Reason: {{ refund.reason|default:"(no reason provided)" }}
+
+Status: {{ refund.status }}
+
+Fly Management

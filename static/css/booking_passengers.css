@@ -1,0 +1,84 @@
+/* Booking Passengers page-specific styles */
+
+.bp-card { border-radius: 18px; }
+.bp-hr { margin: 18px 0; opacity: .15; }
+
+.bp-pill{
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-weight: 800;
+}
+
+.bp-mini{
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.bp-kv{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px){
+  .bp-kv{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.bp-kv__item{
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.bp-label{
+  font-size: .82rem;
+  color: rgba(0,0,0,.55);
+}
+
+.bp-value{
+  font-weight: 900;
+}
+
+.bp-baggage__list{
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px 0;
+  display: grid;
+  gap: 10px;
+}
+
+.bp-baggage__item{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+.bp-baggage__badges{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.bp-actions{
+  position: sticky;
+  bottom: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(0,0,0,.06);
+  backdrop-filter: blur(8px);
+}

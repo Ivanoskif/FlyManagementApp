@@ -1,0 +1,12 @@
+Your flight {{ flight.flight_number }} has been delayed.
+
+Route: {{ flight.origin.iata_code }} → {{ flight.destination.iata_code }}
+
+Old departure: {{ old_departure }}
+New departure: {{ flight.scheduled_departure }}
+
+Old arrival: {{ old_arrival }}
+New arrival: {{ flight.scheduled_arrival }}
+
+We apologize for the inconvenience.
+FLy Management

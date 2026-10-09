@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Pay Booking{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="border rounded p-4">
+      <h1 class="h5 mb-2">Online payment</h1>
+      <div class="text-muted mb-3">
+        Booking <strong>{{ booking.booking_code }}</strong> · Total: {{ booking.total_amount }} {{ booking.currency }}
+      </div>
+
+
+      <form method="post" class="row g-3">
+        {% csrf_token %}
+
+        <div class="col-12">
+          <label class="form-label">Card holder</label>
+          {{ form.card_holder }} {{ form.card_holder.errors }}
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Card number</label>
+          {{ form.card_number }} {{ form.card_number.errors }}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Exp month</label>
+          {{ form.exp_month }} {{ form.exp_month.errors }}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Exp year</label>
+          {{ form.exp_year }} {{ form.exp_year.errors }}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">CVC</label>
+          {{ form.cvc }} {{ form.cvc.errors }}
+        </div>
+
+        <div class="col-12">
+          <button class="btn btn-primary" type="submit">Pay now</button>
+          <a class="btn btn-outline-secondary" href="{% url 'bookings:booking_detail' booking.id %}">Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

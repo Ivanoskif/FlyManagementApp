@@ -1,0 +1,20 @@
+/* Profile page styles */
+
+.pf-card{
+  border-radius: 18px;
+}
+
+.pf-card--side{
+  background: rgba(0,0,0,.02);
+}
+
+.pf-card .form-control,
+.pf-card select,
+.pf-card textarea{
+  border-radius: 12px;
+}
+
+.pf-card .btn{
+  border-radius: 14px;
+  font-weight: 700;
+}

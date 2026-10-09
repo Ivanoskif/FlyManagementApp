@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Airlines (Operator){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">Airlines</h1>
+    <div class="text-muted">Manage airlines (create/edit/deactivate)</div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'core_op:airline_create' %}">+ New airline</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-10">
+    <input class="form-control" name="q" value="{{ request.GET.q }}" placeholder="Search by name/IATA/ICAO/callsign">
+  </div>
+  <div class="col-sm-2 d-grid">
+    <button class="btn btn-outline-secondary">Search</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>IATA</th>
+        <th>ICAO</th>
+        <th>Callsign</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in airlines %}
+        <tr>
+          <td><strong>{{ a.name }}</strong></td>
+          <td>{{ a.iata_code|default:"-" }}</td>
+          <td>{{ a.icao_code|default:"-" }}</td>
+          <td>{{ a.callsign|default:"-" }}</td>
+          <td>
+            {% if a.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'core_op:airline_edit' a.id %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'core_op:airline_delete' a.id %}">Deactivate</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted">No airlines found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+/* Signup page styles */
+
+.signup-card{
+  border-radius: 20px;
+}
+
+.signup-card .form-control,
+.signup-card select,
+.signup-card textarea{
+  border-radius: 12px;
+}
+
+.signup-card .btn{
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.signup-footer a{
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.signup-footer a:hover{
+  text-decoration: underline;
+}

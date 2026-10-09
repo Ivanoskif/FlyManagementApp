@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Aircraft Models (Operator){% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h1 class="h4 mb-0">Aircraft Models</h1>
+    <div class="text-muted">Manage aircraft models</div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'core_op:aircraft_model_create' %}">+ New model</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-sm-10">
+    <input class="form-control" name="q" value="{{ request.GET.q }}" placeholder="Search manufacturer/model">
+  </div>
+  <div class="col-sm-2 d-grid">
+    <button class="btn btn-outline-secondary">Search</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Manufacturer</th>
+        <th>Model</th>
+        <th>Total seats</th>
+        <th>Split (E/P/B)</th>
+        <th>Status</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in models %}
+        <tr>
+          <td><strong>{{ m.manufacturer }}</strong></td>
+          <td>{{ m.model_name }}</td>
+          <td>{{ m.default_total_seats }}</td>
+          <td>
+            {{ m.economy_seats|default:"-" }} /
+            {{ m.premium_seats|default:"-" }} /
+            {{ m.business_seats|default:"-" }}
+          </td>
+          <td>
+            {% if m.is_active %}
+              <span class="badge bg-success">Active</span>
+            {% else %}
+              <span class="badge bg-secondary">Inactive</span>
+            {% endif %}
+          </td>
+          <td class="text-end">
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'core_op:aircraft_model_edit' m.id %}">Edit</a>
+            <a class="btn btn-sm btn-outline-danger" href="{% url 'core_op:aircraft_model_delete' m.id %}">Deactivate</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="6" class="text-muted">No aircraft models found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

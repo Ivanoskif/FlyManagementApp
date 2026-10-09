@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Book Flight{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'flights:flight_detail' flight.id %}">← Back</a>
+
+<section class="bc-hero card border-0 shadow-sm overflow-hidden mb-4">
+  <div class="bc-hero__grid">
+    <!-- Left: image -->
+    <div class="bc-hero__media">
+      <img src="{{ hero_image_url }}" alt="{{ flight.destination.city }}" class="bc-hero__img">
+      <div class="bc-hero__overlay">
+        <div class="bc-hero__title">
+          <div class="bc-kicker">Book your flight</div>
+          <h1 class="mb-1">
+            {{ flight.origin.iata_code }} → {{ flight.destination.iata_code }}
+          </h1>
+          <div class="text-white-50">
+            {{ flight.flight_number }} · {{ flight.airline.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bc-hero__side">
+      <div class="bc-side__head">
+        <div class="bc-side__title">Trip summary</div>
+        <div class="bc-side__sub text-muted">
+          {{ flight.origin.city }} → {{ flight.destination.city }}
+        </div>
+      </div>
+
+      <div class="bc-summary bc-summary--side">
+        <div class="bc-summary__item">
+          <div class="bc-label">Departure</div>
+          <div class="bc-value">{{ flight.scheduled_departure|date:"M d, Y H:i" }}</div>
+        </div>
+        <div class="bc-summary__item">
+          <div class="bc-label">Arrival</div>
+          <div class="bc-value">{{ flight.scheduled_arrival|date:"M d, Y H:i" }}</div>
+        </div>
+        <div class="bc-summary__item">
+          <div class="bc-label">Status</div>
+          <div class="bc-value">{{ flight.get_status_display }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card border-0 shadow-sm bc-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Available fares</h2>
+
+        <div class="table-responsive">
+          <table class="table table-sm align-middle bc-table">
+            <thead>
+              <tr>
+                <th>Class</th>
+                <th>Price</th>
+                <th>Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for x in fares %}
+                <tr>
+                  <td class="fw-semibold">{{ x.fare.fare_class.code }}</td>
+                  <td>{{ x.fare.price }} EUR</td>
+                  <td class="fw-bold">{{ x.available }}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="3" class="text-muted">No fares available.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card border-0 shadow-sm bc-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Booking details</h2>
+
+        <form method="post" class="row g-3">
+          {% csrf_token %}
+
+          <div class="col-12">
+            <label class="form-label">Fare class</label>
+            {{ form.fare_class }}
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Passengers</label>
+            {{ form.passengers_count }}
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-primary w-100" type="submit">
+              Create booking (reserve seats)
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Route Details - Fly Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/route_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'core:route_list' %}">← Back</a>
+
+<section class="rd-hero card border-0 shadow-sm overflow-hidden mb-4">
+  <div class="rd-hero__media">
+    <img src="{{ hero_image_url }}" alt="{{ route.destination.city }}" class="rd-hero__img">
+
+    <div class="rd-hero__overlay">
+      <div class="rd-hero__badge">
+        <span class="badge rd-badge">{{ route.airline.name }}</span>
+      </div>
+
+      <div class="rd-hero__title">
+        <h1 class="mb-1">
+          {{ route.origin.iata_code }} → {{ route.destination.iata_code }}
+        </h1>
+        <div class="text-white-50">
+          {{ route.origin.city }}, {{ route.origin.country }}
+          ·
+          {{ route.destination.city }}, {{ route.destination.country }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rd-hero__body">
+    <div class="rd-cta">
+      <a class="btn btn-outline-secondary" href="{% url 'core:route_list' %}">Browse routes</a>
+    </div>
+  </div>
+</section>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card border-0 shadow-sm rd-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Route info</h2>
+
+        <div class="rd-kv">
+          <div class="rd-kv__row">
+            <div class="rd-kv__k">Airline</div>
+            <div class="rd-kv__v">{{ route.airline.name }}</div>
+          </div>
+
+          <div class="rd-kv__row">
+            <div class="rd-kv__k">From</div>
+            <div class="rd-kv__v">
+              <span class="fw-semibold">{{ route.origin.iata_code }}</span> — {{ route.origin.name }}
+              <div class="text-muted small">
+                {{ route.origin.city }}, {{ route.origin.country }}
+              </div>
+            </div>
+          </div>
+
+          <div class="rd-kv__row">
+            <div class="rd-kv__k">To</div>
+            <div class="rd-kv__v">
+              <span class="fw-semibold">{{ route.destination.iata_code }}</span> — {{ route.destination.name }}
+              <div class="text-muted small">
+                {{ route.destination.city }}, {{ route.destination.country }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

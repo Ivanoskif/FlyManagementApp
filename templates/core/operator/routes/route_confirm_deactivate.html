@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Deactivate Route{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary" href="{% url 'core_op:route_list' %}">← Back</a>
+</div>
+
+<div class="border rounded p-4">
+  <h1 class="h5 mb-2">Deactivate route</h1>
+  <p class="text-muted mb-3">This will set <strong>is_active = False</strong>.</p>
+
+  <div class="mb-3">
+    <div><strong>{{ object.airline.name }}</strong></div>
+    <div class="text-muted">{{ object.origin.iata_code }} → {{ object.destination.iata_code }}</div>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Confirm</button>
+    <a class="btn btn-outline-secondary" href="{% url 'core_op:route_list' %}">Cancel</a>
+  </form>
+</div>
+{% endblock %}

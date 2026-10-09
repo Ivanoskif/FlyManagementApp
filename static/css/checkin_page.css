@@ -1,0 +1,53 @@
+/* Check-in page styles */
+
+.ci-card { border-radius: 18px; }
+
+.ci-kv{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px){
+  .ci-kv{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ci-kv__item{
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.ci-label{
+  font-size: .82rem;
+  color: rgba(0,0,0,.55);
+}
+
+.ci-value{
+  font-weight: 900;
+}
+
+.ci-table thead th{
+  color: rgba(0,0,0,.6);
+  font-weight: 700;
+}
+
+.ci-row--done{
+  opacity: .75;
+}
+
+.ci-actions{
+  position: sticky;
+  bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(0,0,0,.06);
+  backdrop-filter: blur(8px);
+}

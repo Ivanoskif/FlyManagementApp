@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Passengers{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking_passengers.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'bookings:booking_detail' booking.id %}">← Back</a>
+
+<section class="bp-wrap">
+  <div class="card border-0 shadow-sm bp-card mb-3">
+    <div class="card-body">
+      <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+        <div>
+          <h1 class="h5 mb-1">Passenger details</h1>
+          <div class="text-muted">
+            Booking: <strong>{{ booking.booking_code }}</strong>
+            · {{ booking.passengers_count }} passenger{{ booking.passengers_count|pluralize }}
+            · Fare: <strong>{{ booking.fare_class.code }}</strong>
+          </div>
+        </div>
+
+        <span class="badge bg-secondary-subtle text-secondary-emphasis bp-pill">
+          {{ booking.flight.origin.iata_code }} → {{ booking.flight.destination.iata_code }}
+        </span>
+      </div>
+
+      <div class="bp-kv mt-3">
+        <div class="bp-kv__item">
+          <div class="bp-label">Flight</div>
+          <div class="bp-value">{{ booking.flight.flight_number }}</div>
+        </div>
+        <div class="bp-kv__item">
+          <div class="bp-label">Airline</div>
+          <div class="bp-value">{{ booking.flight.airline.name }}</div>
+        </div>
+        <div class="bp-kv__item">
+          <div class="bp-label">Departure</div>
+          <div class="bp-value">{{ booking.flight.scheduled_departure|date:"M d, Y H:i" }}</div>
+        </div>
+        <div class="bp-kv__item">
+          <div class="bp-label">Status</div>
+          <div class="bp-value">{{ booking.flight.get_status_display }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <form method="post" class="bp-form">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    {% if formset.non_form_errors %}
+      <div class="alert alert-danger mb-3">
+        {{ formset.non_form_errors }}
+      </div>
+    {% endif %}
+
+    {% for form in formset %}
+      {{ form.id }}
+
+      <div class="card border-0 shadow-sm bp-card mb-3">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+            <div class="fw-bold">Passenger {{ forloop.counter }}</div>
+
+            {% with pid=form.instance.id %}
+              <span class="badge bg-light text-dark bp-mini">
+                ID: {{ pid }}
+              </span>
+            {% endwith %}
+          </div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">First name</label>
+              {{ form.first_name }}
+              {{ form.first_name.errors }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Last name</label>
+              {{ form.last_name }}
+              {{ form.last_name.errors }}
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Date of birth</label>
+              {{ form.date_of_birth }}
+              {{ form.date_of_birth.errors }}
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Nationality</label>
+              {{ form.nationality }}
+              {{ form.nationality.errors }}
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Document type</label>
+              {{ form.document_type }}
+              {{ form.document_type.errors }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Document no</label>
+              {{ form.document_no }}
+              {{ form.document_no.errors }}
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Special requests</label>
+              {{ form.special_requests }}
+              {{ form.special_requests.errors }}
+            </div>
+          </div>
+
+          <hr class="bp-hr">
+
+          <div class="bp-baggage">
+            <div class="fw-bold mb-2">Baggage (included & selected)</div>
+
+            {% with pid=form.instance.id %}
+              {% if baggage_summary and baggage_summary|get_item:pid %}
+                <ul class="bp-baggage__list">
+                  {% for b in baggage_summary|get_item:pid %}
+                    <li class="bp-baggage__item">
+                      <div>
+                        <span class="fw-semibold">{{ b.baggage_type }}</span> x{{ b.pieces }}
+                        {% if b.max_weight_kg_per_piece and b.max_weight_kg_per_piece != 0 %}
+                          <span class="text-muted">· max {{ b.max_weight_kg_per_piece }}kg</span>
+                        {% endif %}
+                        {% if b.max_linear_cm %}
+                          <span class="text-muted">· max linear {{ b.max_linear_cm }}cm</span>
+                        {% endif %}
+                      </div>
+
+                      <div class="bp-baggage__badges">
+                        {% if b.is_included %}
+                          <span class="badge bg-success">included</span>
+                        {% else %}
+                          <span class="badge bg-warning text-dark">addon</span>
+                          <span class="text-muted small">({{ b.price_eur }} EUR)</span>
+                        {% endif %}
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                <div class="text-muted mb-2">
+                  No baggage info yet (will be generated on save).
+                </div>
+              {% endif %}
+
+              <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                  <label class="form-label">Extra Cabin 10kg (€30) (max 1)</label>
+                    <select class="form-select" name="extra_cabin_{{ pid }}">
+                      <option value="0" {% if addon_defaults|get_item:pid and addon_defaults|get_item:pid|get_item:"extra_cabin" == 0 %}selected{% endif %}>0</option>
+                      <option value="1" {% if addon_defaults|get_item:pid and addon_defaults|get_item:pid|get_item:"extra_cabin" == 1 %}selected{% endif %}>1</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label">Extra Checked 20kg (€50) (max 1)</label>
+                    <select class="form-select" name="extra_checked_{{ pid }}">
+                      <option value="0" {% if addon_defaults|get_item:pid and addon_defaults|get_item:pid|get_item:"extra_checked" == 0 %}selected{% endif %}>0</option>
+                      <option value="1" {% if addon_defaults|get_item:pid and addon_defaults|get_item:pid|get_item:"extra_checked" == 1 %}selected{% endif %}>1</option>
+                    </select>
+                </div>
+              </div>
+            {% endwith %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="bp-actions">
+      <button class="btn btn-primary btn-lg" type="submit">Save passengers</button>
+      <a class="btn btn-outline-secondary btn-lg" href="{% url 'bookings:booking_detail' booking.id %}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

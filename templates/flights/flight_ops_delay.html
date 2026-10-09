@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Delay Flight{% endblock %}
+{% block content %}
+<div class="border rounded p-4">
+  <h1 class="h5">Delay flight {{ flight.flight_number }}</h1>
+  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Delay minutes</label>
+      {{ form.delay_minutes }}
+      {{ form.delay_minutes.errors }}
+      <div class="form-text">{{ form.delay_minutes.help_text }}</div>
+    </div>
+    <button class="btn btn-warning" type="submit">Apply delay</button>
+    <a class="btn btn-outline-secondary" href="{% url 'flights:flight_detail' flight.id %}">Back</a>
+  </form>
+</div>
+{% endblock %}

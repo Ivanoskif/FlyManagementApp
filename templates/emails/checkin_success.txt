@@ -1,0 +1,19 @@
+Hello {{ booking.user.first_name|default:booking.user.username }},
+
+Your online check-in was SUCCESSFUL. ✅
+
+Booking code: {{ booking.booking_code }}
+Flight: {{ booking.flight.flight_number }}
+Route: {{ booking.flight.origin.iata_code }} -> {{ booking.flight.destination.iata_code }}
+Departure: {{ booking.flight.scheduled_departure }}
+
+Checked-in passengers:
+{% for p in passengers %}
+- {{ p.first_name }} {{ p.last_name }} | Seat: {{ p.seat_no|default:"—" }}
+{% endfor %}
+
+Download boarding pass (PDF):
+{{ boarding_pass_url }}
+
+Thank you,
+Fly Management

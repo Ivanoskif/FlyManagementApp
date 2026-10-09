@@ -1,0 +1,78 @@
+/* My Bookings - horizontal card rows */
+
+.mb-filter__select{
+  width: 190px;
+  border-radius: 12px;
+}
+
+/* Header like table headings */
+.mb-head{
+  display: grid;
+  grid-template-columns: 1.1fr .9fr 1.2fr 1.4fr 1fr 1.1fr 1fr .8fr;
+  gap: 10px;
+  padding: 0 8px 10px 8px;
+  color: rgba(0,0,0,.55);
+  font-weight: 800;
+  font-size: .85rem;
+}
+
+/* List */
+.mb-list{
+  display: grid;
+  gap: 12px;
+}
+
+/* Each row is a card */
+.mb-row{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 .4rem 1rem rgba(0,0,0,.06);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.mb-row:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 .8rem 1.6rem rgba(0,0,0,.10);
+}
+
+/* Desktop: row becomes table-like columns */
+@media (min-width: 992px){
+  .mb-row{
+    grid-template-columns: 1.1fr .9fr 1.2fr 1.4fr 1fr 1.1fr 1fr .8fr;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+}
+
+.mb-cell{
+  min-width: 0;
+}
+
+.mb-label{
+  font-size: .78rem;
+  color: rgba(0,0,0,.55);
+  margin-bottom: 2px;
+}
+
+.mb-strong{
+  font-weight: 900;
+}
+
+.mb-route{
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+
+.mb-open{
+  border-radius: 12px;
+}
+
+.mb-empty{
+  border-radius: 18px;
+}

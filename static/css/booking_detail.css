@@ -1,0 +1,43 @@
+/* Booking Detail page */
+
+.bd-card {
+  border-radius: 18px;
+}
+
+.bd-kv {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 768px){
+  .bd-kv {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.bd-kv__item {
+  background: rgba(0,0,0,.02);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.bd-label {
+  font-size: .8rem;
+  color: rgba(0,0,0,.55);
+}
+
+.bd-value {
+  font-weight: 900;
+}
+
+.bd-baggage {
+  list-style: none;
+  padding-left: 0;
+  margin: 6px 0 0 0;
+}
+
+.bd-baggage li {
+  padding: 6px 0;
+}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-sm-10 col-md-6 col-lg-5 col-xl-4">
+    <div class="card border-0 shadow-sm login-card">
+      <div class="card-body">
+
+        <div class="text-center mb-4">
+          <h1 class="h5 mb-1">Welcome back ✈️</h1>
+          <div class="text-muted">
+            Sign in to manage your bookings
+          </div>
+        </div>
+
+        {% if form.errors %}
+          <div class="alert alert-danger">
+            Invalid username or password.
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              required
+              autofocus
+            >
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              required
+            >
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit">
+            Login
+          </button>
+        </form>
+
+        <div class="login-footer mt-3 text-center">
+          <span class="text-muted">No account?</span>
+          <a href="{% url 'accounts:signup' %}">Sign up</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

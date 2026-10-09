@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block title %}Home - Fly Management{% endblock %}
+
+{% block content %}
+<div class="page-wrap">
+
+
+  <div class="hero-shell mb-4">
+    <div id="homeHeroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="3"></button>
+        <button type="button" data-bs-target="#homeHeroCarousel" data-bs-slide-to="4"></button>
+      </div>
+
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <div class="hero-slide">
+            <img class="d-block w-100 hero-img" src="{% static 'slide/slide_img_1.jpg' %}" alt="Slide 1">
+            <div class="hero-overlay"></div>
+            <div class="hero-caption text-start">
+              <div class="hero-pill">✈️ Fly Management • Book smarter</div>
+              <h2 class="display-6">Your journey begins above the clouds.</h2>
+              <p class="lead mb-0">Comfort. Speed. Freedom.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="hero-slide">
+            <img class="d-block w-100 hero-img" src="{% static 'slide/slide_img_2.jpg' %}" alt="Slide 2">
+            <div class="hero-overlay"></div>
+            <div class="hero-caption text-start">
+              <div class="hero-pill">🛫 Schedules you can trust</div>
+              <h2 class="display-6">Reliable flights, ready when you are.</h2>
+              <p class="lead mb-0">Global routes. Trusted airlines.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="hero-slide">
+            <img class="d-block w-100 hero-img" src="{% static 'slide/slide_img_3.jpg' %}" alt="Slide 3">
+            <div class="hero-overlay"></div>
+            <div class="hero-caption text-start">
+              <div class="hero-pill">🔎 Search • Compare • Go</div>
+              <h2 class="display-6">Discover your next destination.</h2>
+              <p class="lead mb-0">Search, compare, and choose with ease.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="hero-slide">
+            <img class="d-block w-100 hero-img" src="{% static 'slide/slide_img_4.jpg' %}" alt="Slide 4">
+            <div class="hero-overlay"></div>
+            <div class="hero-caption text-start">
+              <div class="hero-pill">🧳 Ready for takeoff</div>
+              <h2 class="display-6">Travel with confidence.</h2>
+              <p class="lead mb-0">Everything prepared before takeoff.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="hero-slide">
+            <img class="d-block w-100 hero-img" src="{% static 'slide/slide_img_5.jpg' %}" alt="Slide 5">
+            <div class="hero-overlay"></div>
+            <div class="hero-caption text-start">
+              <div class="hero-pill">✅ Booking to boarding</div>
+              <h2 class="display-6">From booking to boarding — all in one place.</h2>
+              <p class="lead mb-0">Your complete flight management experience.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#homeHeroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+
+
+  <div class="glass pad">
+    <div class="glass-title">
+      <div>
+        <h3>Search Flights</h3>
+        <div class="sub">Fast filters. Clear results.</div>
+      </div>
+      <span class="badge badge-grad">New</span>
+    </div>
+
+    <form method="get" action="{% url 'flights:flight_list' %}" class="search-grid">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Origin</label>
+          {{ form.origin }}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Destination</label>
+          {{ form.destination }}
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Date</label>
+          {{ form.date }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Passengers</label>
+          {{ form.passengers }}
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Class</label>
+          {{ form.fare_class }}
+        </div>
+      </div>
+
+      <div class="mt-3 d-flex flex-wrap gap-2">
+        <button class="btn btn-brand text-dark" type="submit">Search</button>
+        <a class="btn btn-soft" href="{% url 'flights:flight_list' %}">Browse all flights</a>
+      </div>
+    </form>
+  </div>
+
+
+  <div class="row g-4 section">
+    <div class="col-lg-6">
+      <div class="glass pad h-100">
+        <div class="glass-title">
+          <h3 class="h5 m-0">Database overview</h3>
+          <span class="sub">Today: {{ today }}</span>
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Airports</span><span class="badge bg-dark">{{ stats.airports }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Airlines</span><span class="badge bg-dark">{{ stats.airlines }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Routes</span><span class="badge bg-dark">{{ stats.routes }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Flights</span><span class="badge bg-dark">{{ stats.flights }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass pad h-100">
+        <div class="glass-title">
+          <h3 class="h5 m-0">Popular routes</h3>
+          <a class="link-soft" href="{% url 'flights:flight_list' %}">Explore</a>
+        </div>
+
+                  <div class="d-grid gap-2">
+          {% for r in popular_routes %}
+            <div class="route-row">
+              <div>
+                <div style="font-weight:900; letter-spacing:-.01em;">
+                  {{ r.origin__iata_code }} → {{ r.destination__iata_code }}
+                </div>
+                <div class="sub">
+                  {{ r.origin__city }}, {{ r.origin__country }} → {{ r.destination__city }}, {{ r.destination__country }}
+                </div>
+              </div>
+              <span class="badge bg-secondary">{{ r.cnt }}</span>
+            </div>
+          {% empty %}
+            <div class="sub">No routes data yet.</div>
+          {% endfor %}
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- SUGGESTED -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 class="h5">Suggested flights</h2>
+        <div class="sub">Upcoming departures (based on schedule)</div>
+      </div>
+      <a class="link-soft" href="{% url 'flights:flight_list' %}">View all</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      {% for c in suggested_flight_cards %}
+        {% with f=c.flight %}
+          <div class="col">
+            <div class="tile h-100">
+              <img src="{{ c.image_url }}" class="w-100 tile-img" alt="Suggested flight">
+              <div class="tile-body">
+                <div class="tile-top">
+                  <div>
+                    <p class="tile-route mb-1">{{ f.origin.iata_code }} → {{ f.destination.iata_code }}</p>
+                    <div class="tile-meta">{{ f.origin.city }} → {{ f.destination.city }}</div>
+                  </div>
+                  <span class="badge badge-grad">{{ f.base_price }} EUR</span>
+                </div>
+
+                <div class="mt-3 kv">
+                  <div><strong>Flight:</strong> {{ f.flight_number }}</div>
+                  <div><strong>Airline:</strong> {{ f.airline.name }}</div>
+                  <div><strong>Departure:</strong> {{ f.scheduled_departure|date:"M d, Y H:i" }}</div>
+                  <div><strong>Status:</strong> {{ f.get_status_display }}</div>
+                </div>
+
+                <div class="mt-3">
+                  <a class="btn btn-soft btn-sm w-100" href="{% url 'flights:flight_list' %}">Browse flights</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endwith %}
+      {% empty %}
+        <div class="col">
+          <div class="glass pad sub">No upcoming flights to suggest yet.</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    </div>
+  </div>
+
+  <!-- WHY -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 class="h5">Why Fly Management?</h2>
+        <div class="sub">A clean booking experience built for speed.</div>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 g-3">
+      <div class="col">
+        <div class="feature h-100">
+          <div class="icon">⚡</div>
+          <p class="title">Fast search</p>
+          <p class="desc">Quick filters and simple booking flow.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="feature h-100">
+          <div class="icon">🗺️</div>
+          <p class="title">Routes & schedules</p>
+          <p class="desc">Clear origin/destination and timelines.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="feature h-100">
+          <div class="icon">🎫</div>
+          <p class="title">Booking ready</p>
+          <p class="desc">Designed to connect with tickets & payments.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="feature h-100">
+          <div class="icon">⭐</div>
+          <p class="title">Membership perks</p>
+          <p class="desc">Basic / Plus / Premium support & benefits.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 class="h5">How it works</h2>
+        <div class="sub">Three steps to your next flight.</div>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-3">
+      <div class="col">
+        <div class="step h-100">
+          <div class="n">1</div>
+          <p class="t">Search</p>
+          <p class="d">Set origin, destination, date, passengers & class.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="step h-100">
+          <div class="n">2</div>
+          <p class="t">Choose</p>
+          <p class="d">Open flights and pick the best option.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="step h-100">
+          <div class="n">3</div>
+          <p class="t">Book</p>
+          <p class="d">Reserve and manage your travel in one place.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERKS -->
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 class="h5">Membership perks</h2>
+        <div class="sub">Pick the plan that fits your travel style.</div>
+      </div>
+    </div>
+
+    <div class="glass pad perks">
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle bg-white mb-0">
+          <thead class="perks">
+            <tr>
+              <th>Plan</th>
+              <th>Baggage</th>
+              <th>Seat priority</th>
+              <th>Support</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">Basic</td>
+              <td>Standard allowance</td>
+              <td>Standard</td>
+              <td>Email</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Plus</td>
+              <td>More flexibility</td>
+              <td>Priority (when available)</td>
+              <td>Faster response</td>
+            </tr>
+            <tr>
+              <td class="fw-bold">Premium</td>
+              <td>Highest allowance</td>
+              <td>Best availability</td>
+              <td>Priority support</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

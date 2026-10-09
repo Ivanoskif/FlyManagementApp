@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block title %}Booking {{ booking.booking_code }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/booking_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<a class="btn btn-sm btn-outline-secondary mb-3" href="{% url 'flights:flight_detail' booking.flight.id %}">
+  ← Back to flight
+</a>
+
+<div class="card border-0 shadow-sm bd-card mb-3">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+      <div>
+        <h1 class="h5 mb-1">
+          Booking <span class="text-muted">{{ booking.booking_code }}</span>
+        </h1>
+        <div class="text-muted">
+          {{ booking.flight.origin.iata_code }} → {{ booking.flight.destination.iata_code }}
+          · Flight <strong>{{ booking.flight.flight_number }}</strong>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <span class="badge bg-dark">{{ booking.status }}</span>
+        {% if booking.expires_at and booking.status == "RESERVED" %}
+          <div class="small text-muted mt-1">
+            Expires: {{ booking.expires_at }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="bd-kv mt-3">
+      <div class="bd-kv__item">
+        <div class="bd-label">Airline</div>
+        <div class="bd-value">{{ booking.flight.airline.name }}</div>
+      </div>
+      <div class="bd-kv__item">
+        <div class="bd-label">Departure</div>
+        <div class="bd-value">{{ booking.flight.scheduled_departure }}</div>
+      </div>
+      <div class="bd-kv__item">
+        <div class="bd-label">Arrival</div>
+        <div class="bd-value">{{ booking.flight.scheduled_arrival }}</div>
+      </div>
+      <div class="bd-kv__item">
+        <div class="bd-label">Fare class</div>
+        <div class="bd-value">{{ booking.fare_class.name }}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+
+
+<div class="card border-0 shadow-sm bd-card mb-3">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+
+      <div>
+        <div class="bd-label">Total amount</div>
+        <div class="h4 mb-0">
+          {{ booking.total_amount }} {{ booking.currency }}
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 flex-wrap align-items-start">
+
+        {% if booking.status == "RESERVED" %}
+
+          <a class="btn btn-outline-dark"
+             href="{% url 'bookings:booking_passengers' booking.id %}?edit=1">
+            Edit passengers
+          </a>
+
+          {% if request.user.passenger_profile and request.user.passenger_profile.can_choose_seat %}
+            <a class="btn btn-outline-success"
+               href="{% url 'bookings:booking_seats' booking.id %}">
+              Choose seats
+            </a>
+          {% endif %}
+
+          <a class="btn btn-primary"
+             href="{% url 'bookings:demo_payment' booking.id %}">
+            Pay online
+          </a>
+
+          <button class="btn btn-outline-primary" type="button" disabled
+                  title="You must pay first to enable online check-in">
+            Online check-in
+          </button>
+
+          <form method="post"
+                action="{% url 'bookings:booking_cancel' booking.id %}"
+                onsubmit="return confirm('Cancel this booking? Seats will be released.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+              Cancel booking
+            </button>
+          </form>
+
+        {% elif booking.status == "PAID" %}
+
+          <a class="btn btn-outline-primary"
+             href="{% url 'bookings:booking_check_in' booking.id %}">
+            Online check-in
+          </a>
+
+          <a class="btn btn-outline-danger"
+             href="{% url 'bookings:refund_request' booking.id %}">
+            Request refund
+          </a>
+
+        {% endif %}
+      </div>
+    </div>
+
+    {% if booking.status == "PAID" %}
+      <div class="small text-success mt-2">
+        Online check-in is available.
+      </div>
+    {% elif booking.status == "RESERVED" %}
+      <div class="small text-danger mt-2">
+        Pay first to enable online check-in.
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+    <div class="card border-0 shadow-sm bd-card mb-3">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Passengers</h2>
+
+        {% if booking.passengers.all %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>DOB</th>
+                  <th>Document</th>
+                  <th>Nationality</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in booking.passengers.all %}
+                  <tr>
+                    <td>{{ p.first_name }} {{ p.last_name }}</td>
+                    <td>{{ p.date_of_birth }}</td>
+                    <td>{{ p.document_type }} · {{ p.document_no }}</td>
+                    <td>{{ p.nationality|default:"—" }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-muted">No passengers saved yet.</div>
+        {% endif %}
+      </div>
+    </div>
+
+<div class="card border-0 shadow-sm bd-card">
+  <div class="card-body">
+    <h2 class="h6 mb-3">Baggage</h2>
+    <hr/>
+
+    {% for p in booking.passengers.all %}
+      <div class="mb-3">
+        <div class="fw-bold">{{ p.first_name }} {{ p.last_name }}</div>
+
+        {% with items=baggage_summary|get_item:p.id %}
+          {% if items %}
+            <ul class="bd-baggage">
+              {% for b in items %}
+                <li>
+                  {{ b.baggage_type }} x{{ b.pieces }}
+                  {% if b.max_weight_kg_per_piece and b.max_weight_kg_per_piece != 0 %}
+                    · max {{ b.max_weight_kg_per_piece }}kg
+                  {% endif %}
+                  {% if b.max_linear_cm %}
+                    · max linear {{ b.max_linear_cm }}cm
+                  {% endif %}
+
+                  {% if b.is_included %}
+                    <span class="badge bg-success">included</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">addon</span>
+                    <span class="text-muted">({{ b.price_eur }} EUR)</span>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <div class="text-muted">No baggage data.</div>
+          {% endif %}
+        {% endwith %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+  </div>
+
+
+  <div class="col-lg-5">
+
+    <div class="card border-0 shadow-sm bd-card mb-3">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Ticket</h2>
+        {% if booking.ticket %}
+          <div><strong>{{ booking.ticket.ticket_number }}</strong></div>
+          <span class="badge bg-success">{{ booking.ticket.status }}</span>
+        {% else %}
+          <div class="text-muted">No ticket issued yet.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm bd-card mb-3">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Payments</h2>
+        {% if booking.payments.all %}
+          <ul class="list-group list-group-flush">
+            {% for pay in booking.payments.all %}
+              <li class="list-group-item d-flex justify-content-between">
+                <div>
+                  <strong>{{ pay.amount }} {{ booking.currency }}</strong>
+                  <div class="small text-muted">{{ pay.method }} · {{ pay.status }}</div>
+                </div>
+                <div class="small text-muted">
+                  {{ pay.paid_at|default:pay.created_at }}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">No payments yet.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm bd-card">
+      <div class="card-body">
+        <h2 class="h6 mb-3">Refunds</h2>
+        {% if booking.refunds.all %}
+          <ul class="list-group list-group-flush">
+            {% for r in booking.refunds.all %}
+              <li class="list-group-item d-flex justify-content-between">
+                <div>
+                  <strong>{{ r.amount }} {{ booking.currency }}</strong>
+                  <div class="small text-muted">{{ r.status }}</div>
+                </div>
+                <div class="small text-muted">
+                  {{ r.refunded_at|default:r.created_at }}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="text-muted">No refunds.</div>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Refund Queue{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Refund Queue</h1>
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+  {% endfor %}
+{% endif %}
+
+<div class="table-responsive">
+  <table class="table table-striped align-middle">
+    <thead>
+      <tr>
+        <th>Booking</th>
+        <th>User</th>
+        <th>Flight</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Requested</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in refunds %}
+        <tr>
+          <td>{{ r.booking.booking_code }}</td>
+          <td>{{ r.booking.user.username }}</td>
+          <td>{{ r.booking.flight.flight_number }}</td>
+          <td>{{ r.amount }}</td>
+          <td><span class="badge bg-dark">{{ r.status }}</span></td>
+          <td>{{ r.created_at }}</td>
+          <td class="text-end">
+            {% if r.status == "REQUESTED" %}
+              <form method="post" action="{% url 'bookings:refund_approve' r.id %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-success" type="submit">Approve</button>
+              </form>
+              <form method="post" action="{% url 'bookings:refund_reject' r.id %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+              </form>
+            {% elif r.status == "APPROVED" %}
+              <form method="post" action="{% url 'bookings:refund_complete' r.id %}" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-sm btn-primary" type="submit">Complete</button>
+              </form>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="text-muted">No refunds yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

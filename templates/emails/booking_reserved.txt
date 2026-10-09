@@ -1,0 +1,23 @@
+Hello {{ booking.user.first_name|default:booking.user.username }},
+
+Your flight has been RESERVED successfully.
+
+Booking code: {{ booking.booking_code }}
+Status: {{ booking.status }}
+
+Flight: {{ booking.flight.flight_number }}
+Route: {{ booking.flight.origin.iata_code }} -> {{ booking.flight.destination.iata_code }}
+Departure: {{ booking.flight.scheduled_departure }}
+Arrival: {{ booking.flight.scheduled_arrival }}
+
+Fare class: {{ booking.fare_class.name }}
+Passengers: {{ booking.passengers_count }}
+Total: {{ booking.total_amount }} {{ booking.currency }}
+
+Passengers list:
+{% for p in booking.passengers.all %}
+- {{ p.first_name }} {{ p.last_name }} ({{ p.document_type }}: {{ p.document_no }})
+{% endfor %}
+
+Thank you,
+Fly Management

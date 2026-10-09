@@ -1,0 +1,9 @@
+Hello {{ booking.user.username }},
+
+Your refund request has been APPROVED.
+
+Booking: {{ booking.booking_code }}
+Amount: {{ refund.amount }} {{ booking.currency }}
+Status: {{ refund.status }}
+
+Fly Management

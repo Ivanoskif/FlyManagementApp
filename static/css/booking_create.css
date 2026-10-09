@@ -1,0 +1,119 @@
+/* Booking Create page-specific styles (FINAL) */
+
+.bc-card { border-radius: 18px; }
+.bc-hero { border-radius: 22px; overflow: hidden; }
+
+/* HERO split layout */
+.bc-hero__grid{
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 992px){
+  .bc-hero__grid{
+    grid-template-columns: 1.25fr .75fr;
+    min-height: 320px;
+  }
+}
+
+/* Left: image */
+.bc-hero__media{
+  position: relative;
+  height: 260px;
+  background: rgba(0,0,0,.06);
+}
+
+@media (min-width: 992px){
+  .bc-hero__media{
+    height: auto;
+    min-height: 320px;
+  }
+}
+
+.bc-hero__img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bc-hero__overlay{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 18px;
+  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.60));
+}
+
+.bc-kicker{
+  color: rgba(255,255,255,.8);
+  font-weight: 700;
+  font-size: .85rem;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.bc-hero__title h1{
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: -.01em;
+  margin: 0;
+}
+
+/* Right: summary panel */
+.bc-hero__side{
+  padding: 16px 18px;
+  background: rgba(0,0,0,.02);
+  border-left: 1px solid rgba(0,0,0,.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 991.98px){
+  .bc-hero__side{
+    border-left: none;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+}
+
+.bc-side__title{
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+
+.bc-side__sub{
+  font-size: .95rem;
+}
+
+/* Summary cards inside side panel */
+.bc-summary--side{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.bc-summary__item{
+  background: rgba(255,255,255,.75);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.bc-label{
+  font-size: .82rem;
+  color: rgba(0,0,0,.55);
+}
+
+.bc-value{
+  font-weight: 900;
+}
+
+/* Table */
+.bc-table thead th{
+  color: rgba(0,0,0,.6);
+  font-weight: 700;
+}

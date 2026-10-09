@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Reschedule Flight{% endblock %}
+{% block content %}
+<div class="border rounded p-4">
+  <h1 class="h5">Reschedule flight {{ flight.flight_number }}</h1>
+  {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">New departure (UTC)</label>
+      {{ form.new_departure }}
+      {{ form.new_departure.errors }}
+      <div class="form-text">{{ form.new_departure.help_text }}</div>
+    </div>
+    <button class="btn btn-primary" type="submit">Reschedule</button>
+    <a class="btn btn-outline-secondary" href="{% url 'flights:flight_detail' flight.id %}">Back</a>
+  </form>
+</div>
+{% endblock %}

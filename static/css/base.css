@@ -1,0 +1,70 @@
+/* base.css */
+:root{
+  --brand-1:#0ea5e9;   /* sky */
+  --brand-2:#a78bfa;   /* purple */
+  --ink:#0f172a;
+}
+
+/* FOOTER */
+.fm-footer{
+  background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+  color: rgba(255,255,255,.92);
+}
+
+.fm-footer-card{
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 18px;
+  backdrop-filter: blur(10px);
+}
+
+.fm-footer-logo{
+  height: 28px;
+  width: auto;
+  border-radius: 6px;
+}
+
+.fm-footer-brand{
+  font-weight: 900;
+  letter-spacing: -.02em;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.fm-footer-sub{
+  color: rgba(255,255,255,.88);
+  font-size: .95rem;
+}
+
+.fm-footer-title{
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.fm-footer-links{
+  display: grid;
+  gap: 6px;
+}
+
+.fm-footer-links a{
+  color: rgba(255,255,255,.9);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.fm-footer-links a:hover{
+  color: #fff;
+  text-decoration: underline;
+}
+
+.fm-footer-hr{
+  border-color: rgba(255,255,255,.25);
+  margin: 16px 0 12px;
+}
+
+.fm-footer-bottom{
+  font-size: .9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.85);
+}

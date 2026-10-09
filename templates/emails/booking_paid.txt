@@ -1,0 +1,34 @@
+Hello {{ booking.user.first_name|default:booking.user.username }},
+
+Your payment was SUCCESSFUL. ✅
+
+Booking code: {{ booking.booking_code }}
+Status: {{ booking.status }}
+
+{% if profile %}
+Membership level: {{ profile.membership_level }}
+{% endif %}
+
+Flight: {{ booking.flight.flight_number }}
+Route: {{ booking.flight.origin.iata_code }} -> {{ booking.flight.destination.iata_code }}
+Departure: {{ booking.flight.scheduled_departure }}
+Arrival: {{ booking.flight.scheduled_arrival }}
+
+Fare class: {{ booking.fare_class.name }}
+Passengers: {{ booking.passengers_count }}
+Total paid: {{ booking.total_amount }} {{ booking.currency }}
+
+Passengers list:
+
+{% for p in booking.passengers.all %}
+- {{ p.first_name }} {{ p.last_name }} ({{ p.document_type }}: {{ p.document_no }})
+  Seat: {% if p.seat_no %}{{ p.seat_no }}{% else %}Not assigned yet{% endif %}
+{% endfor %}
+
+Online check-in:
+{{ checkin_url }}
+
+Your PDF ticket is attached to this email.
+
+Thank you,
+Fly Management

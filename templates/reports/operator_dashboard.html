@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Operator Reports{% endblock %}
+
+{% block content %}
+
+<h1 class="h4 mb-3">Operator Reports</h1>
+
+<form method="get" class="row g-2 mb-4">
+  <div class="col-md-3">
+    <label class="form-label">From</label>
+    <input type="date" name="from" class="form-control" value="{{ from_date|date:'Y-m-d' }}">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">To</label>
+    <input type="date" name="to" class="form-control" value="{{ to_date|date:'Y-m-d' }}">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Group by</label>
+    <select name="group_by" class="form-select">
+      <option value="day" {% if group_by == "day" %}selected{% endif %}>Day</option>
+      <option value="week" {% if group_by == "week" %}selected{% endif %}>Week</option>
+      <option value="month" {% if group_by == "month" %}selected{% endif %}>Month</option>
+    </select>
+  </div>
+  <div class="col-md-3 d-flex align-items-end gap-2">
+    <button class="btn btn-primary" type="submit">Apply</button>
+            <a class="btn btn-outline-secondary btn-sm"
+           href="{% url 'reports:export_bookings_csv' %}?from={{ from_date }}&to={{ to_date }}">
+          Export CSV
+        </a>
+
+        <a class="btn btn-outline-success btn-sm"
+           href="{% url 'reports:export_bookings_xlsx' %}?from={{ from_date }}&to={{ to_date }}&group_by={{ group_by }}">
+          Export Excel (.xlsx)
+        </a>
+  </div>
+</form>
+
+    <div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="border rounded p-3">
+      <div class="text-muted small">Total PAID revenue</div>
+      <div class="h4 mb-0">{{ revenue_sum }} EUR</div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="border rounded p-3">
+      <div class="text-muted small">Total PAID passengers</div>
+      <div class="h4 mb-0">{{ pax_sum }}</div>
+    </div>
+  </div>
+</div>
+
+    <div class="row g-3 mb-4">
+  <div class="col-lg-6">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Flights count chart</h2>
+      <canvas id="chartFlights"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Revenue (PAID) chart</h2>
+      <canvas id="chartRevenue"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Top routes by revenue</h2>
+      <canvas id="chartRoutes"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Top flights revenue (with load factor)</h2>
+      <canvas id="chartTopFlights"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Flights count ({{ group_by }})</h2>
+      {% if flights_series %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th class="text-end">Flights</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for x in flights_series %}
+                <tr>
+                  <td>{{ x.period|date:"Y-m-d" }}</td>
+                  <td class="text-end">{{ x.cnt }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">No flights in selected range.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Revenue (PAID) ({{ group_by }})</h2>
+      {% if revenue_series %}
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Period</th>
+                <th class="text-end">Passengers</th>
+                <th class="text-end">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for x in revenue_series %}
+                <tr>
+                  <td>{{ x.period|date:"Y-m-d" }}</td>
+                  <td class="text-end">{{ x.pax|default:0 }}</td>
+                  <td class="text-end">{{ x.revenue|default:"0.00" }} EUR</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">No paid bookings in selected range.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Revenue by route (PAID)</h2>
+      {% if route_table %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Route</th>
+                <th class="text-end">Bookings</th>
+                <th class="text-end">Passengers</th>
+                <th class="text-end">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in route_table %}
+                <tr>
+                  <td><strong>{{ r.flight__origin__iata_code }} → {{ r.flight__destination__iata_code }}</strong></td>
+                  <td class="text-end">{{ r.bookings }}</td>
+                  <td class="text-end">{{ r.pax|default:0 }}</td>
+                  <td class="text-end">{{ r.revenue|default:"0.00" }} EUR</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">No data.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="border rounded p-3">
+      <h2 class="h6 mb-3">Top flights (PAID) + load factor</h2>
+      {% if top_flights %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>Flight</th>
+                <th class="text-end">PAX</th>
+                <th class="text-end">Cap</th>
+                <th class="text-end">LF</th>
+                <th class="text-end">Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for f in top_flights %}
+                <tr>
+                  <td>
+                    <div><strong>{{ f.flight_number }}</strong> {{ f.origin }} → {{ f.destination }}</div>
+                    <div class="small text-muted">{{ f.departure }}</div>
+                  </td>
+                  <td class="text-end">{{ f.pax_paid }}</td>
+                  <td class="text-end">{{ f.capacity }}</td>
+                  <td class="text-end">
+                    {% if f.capacity > 0 %}
+                      {{ f.load_factor|floatformat:2 }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </td>
+                  <td class="text-end">{{ f.revenue_paid }} EUR</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="text-muted">No flights.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script id="charts-data" type="application/json">{{ charts_json|safe }}</script>
+
+<script>
+  const raw = document.getElementById("charts-data").textContent;
+  const charts = JSON.parse(raw);
+
+
+  new Chart(document.getElementById("chartFlights"), {
+    type: "line",
+    data: {
+      labels: charts.flights.labels,
+      datasets: [{
+        label: "Flights",
+        data: charts.flights.values,
+        tension: 0.25
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+
+  new Chart(document.getElementById("chartRevenue"), {
+    type: "line",
+    data: {
+      labels: charts.revenue.labels,
+      datasets: [
+        {
+          label: "Revenue (EUR)",
+          data: charts.revenue.values,
+          tension: 0.25,
+          yAxisID: "y"
+        },
+        {
+          label: "Passengers",
+          data: charts.revenue.pax,
+          tension: 0.25,
+          yAxisID: "y1"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: "EUR" } },
+        y1: { beginAtZero: true, position: "right", grid: { drawOnChartArea: false }, title: { display: true, text: "PAX" } }
+      }
+    }
+  });
+
+
+  new Chart(document.getElementById("chartRoutes"), {
+    type: "bar",
+    data: {
+      labels: charts.routes.labels,
+      datasets: [{
+        label: "Revenue (EUR)",
+        data: charts.routes.revenue
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  new Chart(document.getElementById("chartTopFlights"), {
+    type: "bar",
+    data: {
+      labels: charts.topFlights.labels,
+      datasets: [
+        {
+          label: "Revenue (EUR)",
+          data: charts.topFlights.revenue,
+          yAxisID: "y"
+        },
+        {
+          type: "line",
+          label: "Load Factor (0..1)",
+          data: charts.topFlights.loadFactor,
+          tension: 0.25,
+          yAxisID: "y1"
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: true } },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: "EUR" } },
+        y1: { beginAtZero: true, position: "right", grid: { drawOnChartArea: false }, title: { display: true, text: "Load Factor" } }
+      }
+    }
+  });
+</script>
+
+{% endblock %}

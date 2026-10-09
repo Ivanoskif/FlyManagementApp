@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/my_bookings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mb-3">
+  <div>
+    <h1 class="h4 mb-1">My Bookings</h1>
+    <div class="text-muted">Manage your reservations, payments, and tickets.</div>
+  </div>
+
+  <form method="get" class="mb-filter">
+    <div class="d-flex gap-2 flex-wrap align-items-center">
+      <select name="status" class="form-select form-select-sm mb-filter__select">
+        <option value="">All statuses</option>
+        <option value="RESERVED" {% if selected_status == "RESERVED" %}selected{% endif %}>RESERVED</option>
+        <option value="PAID" {% if selected_status == "PAID" %}selected{% endif %}>PAID</option>
+        <option value="CANCELLED" {% if selected_status == "CANCELLED" %}selected{% endif %}>CANCELLED</option>
+        <option value="REFUNDED" {% if selected_status == "REFUNDED" %}selected{% endif %}>REFUNDED</option>
+      </select>
+
+      <button class="btn btn-sm btn-outline-dark" type="submit">Filter</button>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'bookings:my_bookings' %}">Reset</a>
+    </div>
+  </form>
+</div>
+
+
+<div class="mb-head d-none d-lg-grid">
+  <div>Code</div>
+  <div>Flight</div>
+  <div>Route</div>
+  <div>Departure</div>
+  <div>Status</div>
+  <div>Total</div>
+  <div>Ticket</div>
+  <div class="text-end"> </div>
+</div>
+
+<div class="mb-list">
+  {% for b in bookings %}
+    <div class="mb-row">
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Code</div>
+        <div class="mb-strong">{{ b.booking_code }}</div>
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Flight</div>
+        <div>{{ b.flight.flight_number }}</div>
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Route</div>
+        <div class="mb-route">
+          {{ b.flight.origin.iata_code }} → {{ b.flight.destination.iata_code }}
+        </div>
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Departure</div>
+        <div>{{ b.flight.scheduled_departure|date:"M d, Y H:i" }}</div>
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Status</div>
+        {% if b.status == "PAID" %}
+          <span class="badge bg-success">PAID</span>
+        {% elif b.status == "RESERVED" %}
+          <span class="badge bg-warning text-dark">RESERVED</span>
+        {% elif b.status == "CANCELLED" %}
+          <span class="badge bg-secondary">CANCELLED</span>
+        {% elif b.status == "REFUNDED" %}
+          <span class="badge bg-dark">REFUNDED</span>
+        {% else %}
+          <span class="badge bg-dark">{{ b.status }}</span>
+        {% endif %}
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Total</div>
+        <div class="mb-strong">{{ b.total_amount }} {{ b.currency }}</div>
+      </div>
+
+      <div class="mb-cell">
+        <div class="mb-label d-lg-none">Ticket</div>
+        {% if b.ticket %}
+          <span class="badge bg-success">{{ b.ticket.status }}</span>
+        {% else %}
+          <span class="text-muted">—</span>
+        {% endif %}
+      </div>
+
+      <div class="mb-cell text-lg-end">
+        <a class="btn btn-sm btn-outline-dark mb-open" href="{% url 'bookings:booking_detail' b.id %}">
+          Open
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <div class="card border-0 shadow-sm mb-empty">
+      <div class="card-body text-muted">
+        You don’t have any bookings yet.
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
